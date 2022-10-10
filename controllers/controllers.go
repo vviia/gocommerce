@@ -164,40 +164,6 @@ func Login() gin.HandlerFunc {
 	}
 }
 
-//This is function to add products
-//this is an admin part
-//json should look like this
-// post request : http://localhost:8080/admin/addproduct
-/*
-json
-
-{
-"product_name" : "pencil"
-"price"        : 98
-"rating"       : 10
-"image"        : "image-url"
-}
-*/
-func ProductViewerAdmin() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		var products models.Product
-		defer cancel()
-		if err := c.BindJSON(&products); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		products.Product_ID = primitive.NewObjectID()
-		_, anyerr := ProductCollection.InsertOne(ctx, products)
-		if anyerr != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Created"})
-			return
-		}
-		defer cancel()
-		c.JSON(http.StatusOK, "Successfully added our Product Admin!!")
-	}
-}
-
 // SearchProduct lists all the products in the database
 // paging will be added and fixed soon
 func SearchProduct() gin.HandlerFunc {
